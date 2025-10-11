@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-const page = (props: Props) => {
+const page = () => {
   return (
     <div>page</div>
   )
