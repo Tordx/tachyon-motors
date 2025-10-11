@@ -1,7 +1,7 @@
 'use client'
 
-import ConsultButton from './button'
-import VideoBackground from './video-background'
+import ConsultButton from './components/button'
+import VideoBackground from './components/video-background'
 
 const Hero = () => {
   return (

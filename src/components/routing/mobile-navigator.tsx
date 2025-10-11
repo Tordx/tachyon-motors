@@ -18,15 +18,15 @@ const MobileNavigator = (props: Props) => {
     redirect(href);
   }
   return (
-    <AnimatePresence>
+    <AnimatePresence mode='wait'>
       {isOpen && (
-        <div className='flex sm:hidden absolute top-0 min-h-screen w-[100vw] h-screen transition duration-2000 filter backdrop-blur-lg items-center'>
+        <div className='flex md:hidden absolute top-0 min-h-screen w-[100vw] h-screen transition duration-5000 backdrop-blur-lg items-center'>
 
           <motion.nav
             initial={{ y: 40, opacity: 0, filter: "blur(10px)" }}
             animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
             exit={{ y: 40, opacity: 0, filter: "blur(10px)" }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className='w-full h-full items-center justify-start flex flex-col gap-2 mt-60'>
             {item.map((nav, index) => (
               <button onClick={() => handleNavigationPressed(nav.href)} key={index} className='px-3 py-1 text-white text-xl font-montserrat hover:underline hover:underline-offset-4 transition-all cursor-pointer'>

@@ -1,6 +1,6 @@
 import { ForumContent } from '@/types'
 import React from 'react'
-import ThreadCard from './card'
+import ThreadCard from './components/card'
 
 type Props = {
   item: ForumContent[]
@@ -9,7 +9,7 @@ type Props = {
 const Thread = (props: Props) => {
   const {item} = props;
   return (
-    <div className='w-3/4'>
+    <div className='w-full md:w-3/4'>
       {item.map((item) => (
         <ThreadCard key={item.id} item={item} />
       ))}

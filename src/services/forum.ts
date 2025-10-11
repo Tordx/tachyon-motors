@@ -25,7 +25,7 @@ export class ForumService {
         *
       `)
       .eq("is_current", true)
-      .eq("id", forumId)
+      .eq("forum_id", forumId)
       .order("edited_at", { ascending: false });
 
     if (error) throw error;

@@ -11,7 +11,7 @@ const Forum = async () => {
   const forum = await ForumService.getAllCurrent(supabase);
   const dicussionList = await DiscussionService.getAll(supabase)
   return (
-    <div className='w-screen px-12 flex flex-row justify-between items-start py-30'>
+    <div className='w-screen h-auto px-6 sm:px-12 flex flex-col-reverse md:flex-row justify-between items-start py-30'>
       <Thread item={forum} />
       <DiscussionTab item={dicussionList}  />
     </div>
