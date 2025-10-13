@@ -8,6 +8,7 @@ import Navigator from '../routing/navigator'
 import { NAVIGATION_LINKS } from '@/constants'
 import ChevronIcon from '../icons/chevron'
 import MobileNavigator from '../routing/mobile-navigator'
+import AccountCircle from '../icons/account-circle'
 
 const Header = () => {
   const [isNavOpen, setIsNavOpen] = React.useState(false)
@@ -34,11 +35,11 @@ const Header = () => {
   return (
     <motion.header
       animate={controls}
-      className="w-full fixed top-0 left-0 z-50"
+      className="w-full fixed top-0 left-0 z-30"
       style={{ WebkitBackdropFilter: 'blur(0px)' }} // for Safari
     >
       <div className="w-full h-16 px-10 2xl:px-auto text-white flex items-center justify-center sm:justify-between">
-        <div className="z-50 flex flex-row items-center cursor-pointer gap-4  sm:mt-0">
+        <div className="z-30 flex flex-row items-center cursor-pointer gap-10  sm:mt-0">
           <AppLogo onClick={() => redirect('/home')} />
           <button
             style={{ WebkitBackdropFilter: 'blur(0px)' }} // for Safari
@@ -50,9 +51,12 @@ const Header = () => {
             <ChevronIcon />
           </button>
         </div>
-        <div className="hidden md:flex flex-row items-center gap-10">
+        <div className="hidden md:flex flex-row items-center gap-6">
           <Navigator item={NAVIGATION_LINKS} />
           <Locale />
+          <button className='cursor-pointer' onClick={() => {redirect('/auth/login')}}>
+            <AccountCircle />
+          </button>
         </div>
       </div>
       <MobileNavigator

@@ -1,10 +1,14 @@
 import Topic from '@/components/icons/topic'
 import React from 'react'
 
+type Props = {
+  onClick(): void;
+}
 
-const MobileCategoryIconButton = () => {
+const MobileCategoryIconButton = (props: Props) => {
+  const {onClick} = props;
   return (
-    <button className='flex justify-center items-center p-2 ring-2 ring-white rounded-full'>
+    <button onClick={onClick} className='flex justify-center items-center p-2 ring-2 ring-white rounded-full'>
       <Topic />
     </button>
   )

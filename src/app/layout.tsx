@@ -1,8 +1,9 @@
 import Header from "@/components/layouts/header";
-import {  Montserrat } from "next/font/google";
+import { Montserrat } from "next/font/google";
 
 import "./globals.css";
 import { Metadata } from "next";
+import { AuthProvider } from "../context/auth-context";
 const geistSans = Montserrat({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -19,16 +20,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
+
   return (
     <html lang="en">
       <body
-        className={ `${geistSans.variable} antialiased`}
+        className={`${geistSans.variable} antialiased`}
       >
-        <main className="min-h-screen w-full flex flex-col items-center justify-center">
-          <Header />
-          {children}
-        </main>
+        <AuthProvider>
+          <main className="min-h-screen w-full flex flex-col items-center justify-center bg-[#171717]">
+            <Header />
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );

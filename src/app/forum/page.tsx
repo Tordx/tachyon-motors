@@ -1,21 +1,19 @@
-
-import React from 'react'
-import { ForumService } from '@/services/forum';
+// app/forum/page.tsx (Server Component)
+import { ForumService } from '@/services/forum'
+import { DiscussionService } from '@/services/discussion'
 import { createClient } from '@/utils/supabase/server'
-import Thread from './contents/sections/thread/thread'
-import { DiscussionService } from '@/services/discussion';
-import DiscussionTab from './contents/sections/discussion/discussions-tab';
+import ForumClient from './client'
+import { Suspense } from 'react'
+import Loading from './loading'
 
-const Forum = async () => {
+export default async function Forum() {
   const supabase = await createClient()
-  const forum = await ForumService.getAllCurrent(supabase);
-  const dicussionList = await DiscussionService.getAll(supabase)
+  const forum = await ForumService.getAllCurrent(supabase)
+  const discussionList = await DiscussionService.getAll(supabase)
+
   return (
-    <div className='w-screen h-auto px-6 sm:px-12 flex flex-col-reverse md:flex-row justify-between items-start py-30'>
-      <Thread item={forum} />
-      <DiscussionTab item={dicussionList}  />
-    </div>
+    <Suspense fallback={<Loading />}>
+      <ForumClient forum={forum} discussionList={discussionList} />
+    </Suspense>
   )
 }
-
-export default Forum

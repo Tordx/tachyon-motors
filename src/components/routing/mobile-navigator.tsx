@@ -20,7 +20,7 @@ const MobileNavigator = (props: Props) => {
   return (
     <AnimatePresence mode='wait'>
       {isOpen && (
-        <div className='flex md:hidden absolute top-0 min-h-screen w-[100vw] h-screen transition duration-5000 backdrop-blur-lg items-center'>
+        <div className='flex md:hidden fixed inset-0 w-screen h-screen backdrop-blur-lg items-center justify-center z-20'>
 
           <motion.nav
             initial={{ y: 40, opacity: 0, filter: "blur(10px)" }}

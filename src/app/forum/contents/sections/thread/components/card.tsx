@@ -45,7 +45,7 @@ const ThreadCard = (props: Props) => {
           <InteractionButton onClick={handleOpenMore} className='ring-0 gap-0 p-0 flex md:hidden'>
             <More />
           </InteractionButton>
-          {isMoreOpen && <div className='absolute top-10 right-0 bg-black px-4 rounded-md flex md:hidden z-50'>
+          {isMoreOpen && <div className='absolute top-10 right-0 bg-black px-4 rounded-md flex md:hidden z-30'>
             <ReportButton onClick={() => { }} />
           </div>}
         </div>

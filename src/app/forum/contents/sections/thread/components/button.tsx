@@ -12,7 +12,7 @@ const InteractionButton = (props: Props) => {
   return (
     <button onClick={onClick} className={`flex flex-row justify-center items-center gap-2 ring-white rounded-full cursor-pointer ${className ? className : "ring-2 hover:bg-[#ffffff55] p-2"}`}>
       {children}
-      {count && <span>{count}</span>}
+      {count && <span className='text-white'>{count}</span>}
     </button>
   )
 }

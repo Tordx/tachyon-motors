@@ -21,7 +21,7 @@ const PageOverlay = () => {
       animate={controls}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.75, ease: "easeInOut" }}
-      className='absolute w-screen h-screen flex justify-center items-center gap-4 bg-black bg-opacity-50 backdrop-blur-sm z-50 select-none cursor-wait'>
+      className='absolute w-screen h-screen flex justify-center items-center gap-4 bg-black bg-opacity-50 backdrop-blur-sm z-30 select-none cursor-wait'>
       <Image src="/assets/tachyon.png" width={50} height={50} alt="Tachyon Logo" className='filter invert' />
       <div className='text-2xl'>
         Tachyon
