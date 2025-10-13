@@ -10,10 +10,16 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const router = useRouter();
+
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     const { error } = await signIn(email, password)
     if (error) setError(error)
+  }
+
+  const handleRoute = (e: React.MouseEvent, path: string) => {
+    e.preventDefault();
+    router.push(path)
   }
 
   return (
@@ -66,9 +72,9 @@ export default function LoginPage() {
             {loading ? 'Loading...' : 'Sign In'}
           </AuthButton>
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          <button onClick={() => {router.push('/auth/forgot-password')}} className='text-white cursor-pointer'>Forgot Password?</button>
+          <button onClick={(e) => {handleRoute(e, '/auth/forgot-password')}} className='text-white cursor-pointer'>Forgot Password?</button>
         </form>
-        <p className='text-white mt-6'>No Account yet? <button className='text-blue-500 cursor-pointer' onClick={() => router.push('/auth/sign-up')}>Sign up Now</button></p>
+        <p className='text-white mt-6'>No Account yet? <button className='text-blue-500 cursor-pointer' onClick={(e) => handleRoute(e, '/auth/sign-up')}>Sign up Now</button></p>
       </div>
     </div>
   )
