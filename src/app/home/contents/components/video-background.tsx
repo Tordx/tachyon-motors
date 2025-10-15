@@ -1,22 +1,31 @@
+"use client";
+
+import { useState } from "react";
 import { VideoBackgroundProps } from "@/types";
 
-
 export default function VideoBackground(props: VideoBackgroundProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleVideoEnd = () => {
+    // Go to next video or loop back to the first
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % props.videosrc.length);
+  };
+
   return (
     <div className="relative w-full h-screen overflow-hidden">
-      {/* Background Video */}
       <video
+        key={currentIndex} // force video to reload on change
         autoPlay
-        loop
         muted
         playsInline
+        onEnded={handleVideoEnd}
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
       >
-        <source src={props.src} type="video/mp4" />
+        <source src={props.videosrc[currentIndex]} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
-      {/* Grayish Overlay */}
+      {/* Overlay */}
       <div
         className="absolute top-0 left-0 w-full h-full"
         style={{

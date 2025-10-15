@@ -1,5 +1,5 @@
 export type VideoBackgroundProps = {
-  src: string;
+  videosrc: string[];
   overlayColor?: string;
   overlayOpacity?: number;
   children?: React.ReactNode;
