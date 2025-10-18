@@ -1,9 +1,23 @@
+'use client'
 import React from 'react'
 import ProductList from './contents/sections/product-list/product-list'
+import { Product } from '@/services/products';
+import ProductFilters from '@/components/molecules/search-input';
 
-const ProductClient = () => {
+const ProductClient = (props: { data: (Product & { seller_name: string })[] }) => {
+  const { data } = props;
+
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFilterChange = (filters: any) => {
+    console.log('Selected filters:', filters)
+    // you can use router.push with query params or call Supabase fetch here
+  }
   return (
-    <div><ProductList /></div>
+    <div className='w-full flex flex-col items-start justify-start md:px-8 py-15'>
+      <ProductFilters onFiltersChange={handleFilterChange} />
+
+      <ProductList data={data} /></div>
   )
 }
 

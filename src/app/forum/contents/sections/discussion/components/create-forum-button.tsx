@@ -7,9 +7,9 @@ type Props = {
 const CreateForumButton = (props: Props) => {
   return (
     <button
-      className='px-4 py-2 my-4 text-black rounded-lg text-sm sm:text-lg font-bold font-montserrat bg-white hover:bg-[#ccc] transition-colors uppercase cursor-pointer'
+      className="font-montserrat font-bold text-lg uppercase w-full mt-6 bg-gradient-to-r from-amber-500 to-yellow-600 text-black py-3 rounded-lg hover:opacity-90 transition cursor-pointer"
       onClick={props.onClick}>Create a Topic</button>
   )
 }
 
-export default CreateForumButton
+export default CreateForumButton;

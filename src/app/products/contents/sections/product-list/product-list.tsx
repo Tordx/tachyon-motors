@@ -1,51 +1,39 @@
 'use client'
-import React from 'react'
-import ProductCardButton from '../../components/product-card-button'
 
-const ProductList = () => {
-  const mockData = [
-    {
-      id: 1,
-      image: '/cars/toyota-vios.jpg',
-      make: 'Toyota',
-      model: 'Vios',
-      year: 2019,
-      price: 650000,
-      km: 35000,
-    },
-    {
-      id: 2,
-      image: '/cars/honda-civic.jpg',
-      make: 'Honda',
-      model: 'Civic',
-      year: 2018,
-      price: 820000,
-      km: 42000,
-    },
-    {
-      id: 3,
-      image: '/motorcycles/yamaha-mio.jpg',
-      make: 'Yamaha',
-      model: 'Mio i125',
-      year: 2020,
-      price: 68000,
-      km: 12000,
-    },
-    {
-      id: 4,
-      image: '/motorcycles/kawasaki-z400.jpg',
-      make: 'Kawasaki',
-      model: 'Z400',
-      year: 2021,
-      price: 265000,
-      km: 8000,
-    },
-  ]
+import React, { useEffect, useState } from 'react'
+import ProductCardButton from '../../components/product-card-button'
+import { Product } from '@/services/products'
+
+type Props = {
+  data: (Product & { seller_name: string })[];
+}
+
+const ProductList = (props: Props) => {
+  const { data } = props;
+  const [products, setProducts] = useState<(Product & { seller_name: string })[]>([])
+  const STORAGE_BASE_URL = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL as string
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const formatted = data.map((item: (Product & { seller_name: string })) => ({
+          ...item,
+          image_name: `${STORAGE_BASE_URL}${item.image_name}`,
+        }))
+
+        setProducts(formatted)
+      } catch (error) {
+        console.error('Error fetching products:', error)
+      }
+    }
+
+    fetchProducts()
+  }, [STORAGE_BASE_URL, data])
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 gap-6 p-4'>
-      {mockData.map((item) => (
-        <ProductCardButton key={item.id} item={item} />
+    <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-8 p-4'>
+      {products.map((item) => (
+        <ProductCardButton key={item.id} item={item} onClick={(e) => {e.stopPropagation(); e.preventDefault(); alert('Inquire button clicked')}} />
       ))}
     </div>
   )

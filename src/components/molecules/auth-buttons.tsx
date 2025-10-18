@@ -10,7 +10,7 @@ type Props = {
 const AuthButton = (props: Props) => {
   const {children, onClick, type, disabled} = props;
   return (
-    <button type={type} disabled={disabled} className='my-4 py-2 w-full bg-white text-center text-black text-montserrat font-semibold rounded-sm shadow cursor-pointer hover:bg-white/80 active:bg-white-/60 active:scale-101' onClick={onClick}>{children}</button>
+    <button type={type} disabled={disabled} className="w-full mt-6 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-semibold py-3 rounded-lg hover:opacity-90 transition cursor-pointer  " onClick={onClick}>{children}</button>
   )
 }
 
