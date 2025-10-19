@@ -4,14 +4,33 @@
 import React from 'react'
 import { ProductWithSeller } from '@/services/products'
 import FinancingBadge from './components/financing-options'
+import formatCurrency from '@/utils/currency-format'
+import ArrowBack from '@/components/icons/arrow-back'
+import { useRouter } from 'next/navigation'
+import InquiryModal from '../contents/modal'
 
 type Props = {
   product: ProductWithSeller | null
 }
 
 const ProductPageClient: React.FC<Props> = ({ product }) => {
+  const [openModal, setOpenModal] = React.useState(false);
+  const [selectedVehicle, setSelectedVehicle] = React.useState<ProductWithSeller | null>(null);
   const STORAGE_BASE_URL = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL as string
+  const router = useRouter();
   if (!product) return null
+
+  const handleInquireClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setSelectedVehicle(() => {
+      const addURL = {
+        ...product,
+        image_name: `${STORAGE_BASE_URL}${product.image_name}`
+      }
+      return addURL
+    });
+    setOpenModal(true);
+  }
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white font-montserrat">
@@ -23,6 +42,9 @@ const ProductPageClient: React.FC<Props> = ({ product }) => {
           className="object-cover w-full h-full brightness-90"
           draggable={false}
         />
+        <button onClick={() => router.back()} className='absolute top-6 left-6 md:left-6 cursor-pointer z-50 hover:bg-white/30 p-2 rounded-full transition'>
+          <ArrowBack />
+        </button>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
         <div className="absolute bottom-6 left-6 md:left-12">
           <h1 className="text-4xl md:text-5xl font-bold drop-shadow-lg">
@@ -47,6 +69,7 @@ const ProductPageClient: React.FC<Props> = ({ product }) => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-gray-300 text-sm mt-4">
               <InfoItem label="Brand" value={product.brand} />
               <InfoItem label="Model" value={product.model} />
+              <InfoItem label="Type" value={product.type} />
               <InfoItem label="Year" value={product.year.toString()} />
               <InfoItem
                 label="Mileage"
@@ -83,14 +106,15 @@ const ProductPageClient: React.FC<Props> = ({ product }) => {
         {/* Right Column - Seller/Price Card */}
         <div className="w-full lg:w-96">
           <div className="bg-[#1c1c1c] rounded-2xl p-6 border border-gray-800 shadow-xl sticky top-24">
-            <p className="text-3xl font-bold text-white mb-4">
-              ₱{product.price.toLocaleString()}
+            <p className="text-3xl font-bold text-white mb-2">
+              {formatCurrency(product.price)}
             </p>
-
+            {product.downpayment !== 0 && <p className="text-md font-normal text-gray-300 mb-4">
+              {formatCurrency(product.downpayment)} Downpayment
+            </p>}
             <FinancingBadge type={product.financing_option} />
-
-            <button className="w-full mt-6 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-semibold py-3 rounded-lg hover:opacity-90 transition">
-              Contact Seller
+            <button onClick={(e) => handleInquireClick(e)} className="w-full mt-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-semibold py-3 cursor-pointer rounded-lg hover:opacity-90 transition">
+              Inquire Now
             </button>
 
             <button className="w-full mt-3 border border-gray-600 py-3 rounded-lg hover:bg-gray-800 transition">
@@ -99,6 +123,8 @@ const ProductPageClient: React.FC<Props> = ({ product }) => {
           </div>
         </div>
       </div>
+            <InquiryModal open={openModal} onClose={() => {setOpenModal(!openModal)}} vehicleDetails={selectedVehicle} />
+
     </div>
   )
 }
@@ -110,7 +136,7 @@ function InfoItem({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col justify-start">
       <span className="text-gray-500 text-xs uppercase">{label}</span>
-      <span className="text-white text-sm mt-1">{value}</span>
+      <span className="text-white text-sm mt-1 capitalize">{value}</span>
     </div>
   )
 }

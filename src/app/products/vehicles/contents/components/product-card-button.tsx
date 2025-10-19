@@ -9,13 +9,16 @@ import FinancingBadge from '../../[id]/components/financing-options'
 
 type Props = {
   item: (Product & { seller_name: string });
-  onClick(e: React.MouseEvent): void;
+  onClick(
+    e: React.MouseEvent<HTMLButtonElement>,
+    item: Product & { seller_name: string }
+  ): void;
 }
 
 const ProductCardButton = ({ item, onClick }: Props) => {
   return (
     <Link
-      href={`/products/${item.id}`}
+      href={`/products/vehicles/${item.id}`}
       className='w-full flex flex-col bg-[#171717] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all 
         duration-300 
         font-montserrat 
@@ -36,8 +39,8 @@ const ProductCardButton = ({ item, onClick }: Props) => {
           {formatCurrency(item.price)}
         </div>
         <div className='absolute bottom-0 right-0'>
-         
-         <FinancingBadge className='rounded-tl-md text-sm ' type={item.financing_option} />
+
+          <FinancingBadge className='rounded-tl-md text-sm ' type={item.financing_option} />
         </div>
       </div>
 
@@ -45,10 +48,10 @@ const ProductCardButton = ({ item, onClick }: Props) => {
       <div className='p-3 sm:p-4 flex flex-col justify-between text-left flex-1 border-1 border-white rounded-b-lg'>
         <div>
           <div>
-          <h2 className='text-base sm:text-lg font-semibold text-white line-clamp-1'>
-            {item.brand} {item.model}
-          </h2>
-          <h3 className='text-base text-xs font-normal text-white line-clamp-1'>{item.seller_name}</h3>
+            <h2 className='text-base sm:text-lg font-semibold text-white line-clamp-1'>
+              {item.brand} {item.model}
+            </h2>
+            <h3 className='text-base text-xs font-normal text-white line-clamp-1'>{item.seller_name}</h3>
           </div>
           <p className='text-xs sm:text-sm text-white/50'>{item.year}</p>
         </div>
@@ -57,7 +60,7 @@ const ProductCardButton = ({ item, onClick }: Props) => {
           <p className='font-medium'>{item.mileage.toLocaleString()} km</p>
         </div>
 
-        <button onClick={onClick} className='mt-4 self-start cursor-pointer hover:scale-105'>
+        <button onClick={(e) => onClick(e, item)} className='mt-4 self-start cursor-pointer hover:scale-105'>
           <span className='inline-block text-white text-sm px-3 py-1 rounded-md ring-1 ring-white hover:bg-gray-700'>
             Inquire
           </span>

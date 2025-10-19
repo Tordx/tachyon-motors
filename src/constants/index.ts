@@ -6,7 +6,7 @@ export const SITE_KEYWORDS = ["Motorcycle Consulting", "Performance", "Reliabili
 export const CONTACT_EMAIL = "info@tachyonmotors.com";
 export const NAVIGATION_LINKS: { name: string; href: string }[] = [
   { name: "Forum", href: "/forum" },
-  { name: "Products", href: "/products" },
+  { name: "Cars & Motorcycles", href: "/products/vehicles" },
   { name:"Articles", href: "/articles" },
   { name: "About", href: "/about" },
 ];

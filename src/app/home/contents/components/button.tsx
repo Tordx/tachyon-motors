@@ -8,7 +8,7 @@ const ConsultButton = (props: Props) => {
   return (
     <button
       className='px-4 py-2 my-4 ring-2 ring-white text-white rounded-lg text-sm sm:text-lg font-bold font-montserrat hover:bg-gray-700 transition-colors uppercase cursor-pointer'
-      onClick={props.onClick}>Available Vehicles</button>
+      onClick={props.onClick}>Browse Cars & Motorcycles</button>
   )
 }
 

@@ -6,10 +6,12 @@ import { Product } from '@/services/products'
 
 type Props = {
   data: (Product & { seller_name: string })[];
+  selectedItem(item: Product & { seller_name: string }): void;
+  onClick(): void;
 }
 
 const ProductList = (props: Props) => {
-  const { data } = props;
+  const { data, selectedItem, onClick } = props;
   const [products, setProducts] = useState<(Product & { seller_name: string })[]>([])
   const STORAGE_BASE_URL = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL as string
 
@@ -30,10 +32,17 @@ const ProductList = (props: Props) => {
     fetchProducts()
   }, [STORAGE_BASE_URL, data])
 
+  const handleSelectedItem = (e: React.MouseEvent<HTMLButtonElement>, item: Product & { seller_name: string }) => {
+    e.stopPropagation()
+    e.preventDefault()
+    selectedItem(item)
+    onClick();
+  }
+
   return (
     <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-8 p-4'>
       {products.map((item) => (
-        <ProductCardButton key={item.id} item={item} onClick={(e) => {e.stopPropagation(); e.preventDefault(); alert('Inquire button clicked')}} />
+        <ProductCardButton key={item.id} item={item} onClick={handleSelectedItem} />
       ))}
     </div>
   )

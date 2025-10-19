@@ -3,6 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 export type Product = {
   id: number
   name: string
+  type: string
   brand: string
   model: string
   year: number
@@ -10,6 +11,7 @@ export type Product = {
   mileage: number
   image_name: string
   financing_option: 'cash' | 'finance' | 'both'
+  downpayment: number
   created_at: string
   description?: string
 }
@@ -39,10 +41,12 @@ export class ProductService {
       brand,
       model,
       year,
+      type,
       price,
       mileage,
       image_name,
       financing_option,
+      downpayment,
       created_at,
       sellers:seller_id (
         name
@@ -74,6 +78,7 @@ export class ProductService {
       .select(`
       id,
       name,
+      type,
       brand,
       model,
       description,
@@ -82,6 +87,7 @@ export class ProductService {
       mileage,
       image_name,
       financing_option,
+      downpayment,
       created_at,
       sellers:seller_id (
         id,
@@ -131,6 +137,7 @@ export class ProductService {
       .select(`
         id,
         name,
+        type,
         brand,
         model,
         year,
@@ -138,6 +145,7 @@ export class ProductService {
         mileage,
         image_name,
         financing_option,
+        downpayment,
         seller_id,
         created_at
       `)

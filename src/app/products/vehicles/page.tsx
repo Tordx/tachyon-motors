@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react'
 import ProductClient from './client'
-import { ProductService } from '@/services/products'
 import { createClient } from '@/utils/supabase/server'
 import Loading from './loading'
+import { ProductService } from '@/services/products'
 
 export default async function Products() {
   const supabase = await createClient()

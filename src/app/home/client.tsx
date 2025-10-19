@@ -10,7 +10,7 @@ const HomeClient = () => {
   return (
     <>
       <PageOverlay />
-      <Hero onClick={() => router.push('/products')} />
+      <Hero onClick={() => router.push('/products/vehicles')} />
     </>
   )
 }
