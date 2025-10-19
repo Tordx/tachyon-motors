@@ -3,7 +3,8 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 export type Product = {
   id: number
   name: string
-  type: string
+  vehicle_type: string
+  classification: string
   brand: string
   model: string
   year: number
@@ -41,7 +42,8 @@ export class ProductService {
       brand,
       model,
       year,
-      type,
+      vehicle_type,
+      classification,
       price,
       mileage,
       image_name,
@@ -78,7 +80,8 @@ export class ProductService {
       .select(`
       id,
       name,
-      type,
+      vehicle_type,
+      classification,
       brand,
       model,
       description,
@@ -122,6 +125,102 @@ export class ProductService {
     return product;
   }
 
+static async getAllByType(
+  supabase: SupabaseClient,
+  classification: string,
+  id: number,
+  vehicle_type?: string,
+  seller_id?: number
+): Promise<(Product & { seller_name: string })[]> {
+  // eslint-disable-next-line prefer-const
+  let { data, error } = await supabase
+    .from('products')
+    .select(`
+      id,
+      name,
+      brand,
+      model,
+      year,
+      vehicle_type,
+      classification,
+      price,
+      mileage,
+      image_name,
+      financing_option,
+      downpayment,
+      created_at,
+      seller_id,
+      sellers:seller_id (
+        name
+      )
+    `)
+    .not('id', 'eq', id)
+    .eq('classification', classification)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+
+  // Step 2: Fallback if no classification match
+  if (!data || data.length === 0) {
+    if (!vehicle_type) {
+      const { data: currentProduct } = await supabase
+        .from('products')
+        .select('vehicle_type, seller_id')
+        .eq('id', id)
+        .single();
+
+      vehicle_type = currentProduct?.vehicle_type;
+      seller_id = currentProduct?.seller_id;
+    }
+
+    const { data: fallbackData, error: fallbackError } = await supabase
+      .from('products')
+      .select(`
+        id,
+        name,
+        brand,
+        model,
+        year,
+        vehicle_type,
+        classification,
+        price,
+        mileage,
+        image_name,
+        financing_option,
+        downpayment,
+        created_at,
+        seller_id,
+        sellers:seller_id (
+          name
+        )
+      `)
+      .not('id', 'eq', id)
+      .eq('vehicle_type', vehicle_type)
+      .order('created_at', { ascending: false });
+
+    if (fallbackError) throw fallbackError;
+    data = fallbackData;
+  }
+
+  // Step 3: Prioritize items from the same seller_id
+  if (seller_id) {
+    data.sort((a, b) => {
+      if (a.seller_id === seller_id && b.seller_id !== seller_id) return -1;
+      if (a.seller_id !== seller_id && b.seller_id === seller_id) return 1;
+      return 0;
+    });
+  }
+
+  // Step 4: Map seller_name for easier access
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (data || []).map((item: any) => ({
+    ...item,
+    seller_name: Array.isArray(item.sellers)
+      ? item.sellers[0]?.name || null
+      : item.sellers?.name || null,
+  }));
+}
+
 
 
 
@@ -137,7 +236,8 @@ export class ProductService {
       .select(`
         id,
         name,
-        type,
+        vehicle_type,
+        classification,
         brand,
         model,
         year,

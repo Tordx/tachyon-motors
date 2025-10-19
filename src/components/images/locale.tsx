@@ -13,7 +13,7 @@ const Locale = () => {
           {tooltipVisible && (
             <div className='absolute top-15 right-5 flex gap-2 px-4 py-2 justify-center items-center transform bg-black rounded-md'>
               <InfoIcon />
-            <span className=' text-left text-xs font-montserrat font-bold'>Our motorcycles are currently only available in the Philippines but other products can be shipped worldwide
+            <span className=' text-left text-xs font-montserrat font-bold'>Our vehicles are currently only available in the Philippines but other products can be shipped worldwide
             </span>
             </div>
           )}

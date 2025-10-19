@@ -125,7 +125,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
                 />
 
                 <button className="w-full mt-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-semibold py-3 rounded-lg hover:opacity-90 transition">
-                  Inquire Now
+                  Send Inquiry
                 </button>
               </form>
             </div>

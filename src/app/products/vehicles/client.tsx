@@ -14,7 +14,6 @@ const ProductClient = (props: { data: (Product & { seller_name: string })[] }) =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFilterChange = (filters: any) => {
     console.log('Selected filters:', filters)
-    // you can use router.push with query params or call Supabase fetch here
   }
   return (
     <div className='w-full flex flex-col items-start justify-start md:px-8 py-15'>

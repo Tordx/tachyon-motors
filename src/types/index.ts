@@ -46,3 +46,12 @@ export interface Discussion {
   } | null;
   bg_color: string;
 }
+
+
+export type FilterProps = {
+  vehicleType: 'all' | 'cars' | 'motorcycles';
+  financeType: 'all' | 'cash' | 'finance';
+  yearRange: [number, number];
+  priceRange: [number, number];
+  searchValue: string
+}
