@@ -1,18 +1,22 @@
 'use client'
 import React from 'react'
-import { motion, useAnimation } from 'framer-motion'
+import { AnimatePresence, motion, useAnimation } from 'framer-motion'
 import Locale from '../images/locale'
 import AppLogo from '../images/app-logo'
-import { redirect } from 'next/navigation'
+import { redirect, usePathname, useRouter } from 'next/navigation'
 import Navigator from '../routing/navigator'
 import { NAVIGATION_LINKS } from '@/constants'
 import ChevronIcon from '../icons/chevron'
 import MobileNavigator from '../routing/mobile-navigator'
 import AccountCircle from '../icons/account-circle'
+import ArrowBack from '../icons/arrow-back'
 
 const Header = () => {
   const [isNavOpen, setIsNavOpen] = React.useState(false)
   const [isScrolled, setIsScrolled] = React.useState(false)
+  const router = useRouter();
+  const pathname = usePathname();
+  const isVehiclePage = /^\/products\/vehicles\/\d+$/.test(pathname)
   const controls = useAnimation()
 
   React.useEffect(() => {
@@ -38,14 +42,26 @@ const Header = () => {
       className="w-full fixed top-0 left-0 z-30"
       style={{ WebkitBackdropFilter: 'blur(0px)' }} // for Safari
     >
-      <div className="w-full h-16 px-10 2xl:px-auto text-white flex items-center justify-center sm:justify-between">
-        <div className="z-30 flex flex-row items-center cursor-pointer gap-10  sm:mt-0">
+      <div className={`w-full h-16 px-4 md:px-10 2xl:px-auto text-white flex items-center justify-center sm:justify-between ${isVehiclePage ? 'bg-black/30 lg:bg-black/0' : ''}`}>
+        <div className="z-30 w-full md:w-auto flex flex-row items-center justify-between cursor-pointer gap-2  sm:mt-0">
+          <AnimatePresence>
+          {isVehiclePage &&
+            <motion.button
+              onClick={() => router.back()}
+              initial={{ x: -100 }}
+              animate={{ x: 0 }}
+              exit={{ x: -100 }}
+              transition={{ type: 'spring', duration: 0.2 }}
+              className=' cursor-pointer z-50 hover:bg-white/30 p-2 rounded-full transition'>
+              <ArrowBack />
+            </motion.button>
+          }
+          </AnimatePresence>
           <AppLogo onClick={() => redirect('/home')} />
           <button
             style={{ WebkitBackdropFilter: 'blur(0px)' }} // for Safari
-            className={`flex md:hidden transition-transform ${
-              isNavOpen ? 'rotate-180' : 'rotate-0'
-            }`}
+            className={`flex md:hidden transition-transform ${isNavOpen ? 'rotate-180' : 'rotate-0'
+              }`}
             onClick={() => setIsNavOpen(!isNavOpen)}
           >
             <ChevronIcon />
@@ -54,7 +70,7 @@ const Header = () => {
         <div className="hidden md:flex flex-row items-center gap-6">
           <Navigator item={NAVIGATION_LINKS} />
           <Locale />
-          <button className='cursor-pointer' onClick={() => {redirect('/auth/login')}}>
+          <button className='cursor-pointer' onClick={() => { redirect('/auth/login') }}>
             <AccountCircle />
           </button>
         </div>

@@ -5,8 +5,6 @@ import React from 'react'
 import { ProductWithSeller } from '@/services/products'
 import FinancingBadge from './components/financing-options'
 import formatCurrency from '@/utils/currency-format'
-import ArrowBack from '@/components/icons/arrow-back'
-import { useRouter } from 'next/navigation'
 import InquiryModal from '../contents/modal'
 
 type Props = {
@@ -17,7 +15,6 @@ const ProductPageClient: React.FC<Props> = ({ product }) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [selectedVehicle, setSelectedVehicle] = React.useState<ProductWithSeller | null>(null);
   const STORAGE_BASE_URL = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL as string
-  const router = useRouter();
   if (!product) return null
 
   const handleInquireClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -42,9 +39,6 @@ const ProductPageClient: React.FC<Props> = ({ product }) => {
           className="object-cover w-full h-full brightness-90"
           draggable={false}
         />
-        <button onClick={() => router.back()} className='absolute top-6 left-6 md:left-6 cursor-pointer z-50 hover:bg-white/30 p-2 rounded-full transition'>
-          <ArrowBack />
-        </button>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
         <div className="absolute bottom-6 left-6 md:left-12">
           <h1 className="text-4xl md:text-5xl font-bold drop-shadow-lg">

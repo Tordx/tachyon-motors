@@ -47,7 +47,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-3 right-3 text-gray-400 hover:text-white text-3xl cursor-pointer hover:bg-white/30 rounded-full p-2 transition"
+              className="absolute top-3 right-3 text-gray-400 hover:text-white text-3xl cursor-pointer hover:bg-white/30 rounded-full p-2 transition z-50"
             >
               <CloseButton />
             </button>
