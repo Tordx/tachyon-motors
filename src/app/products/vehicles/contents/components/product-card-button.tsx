@@ -45,7 +45,7 @@ const ProductCardButton = ({ item, onClick }: Props) => {
       </div>
 
       {/* BOTTOM: Info */}
-      <div className='p-3 sm:p-4 flex flex-col justify-between text-left flex-1 border-1 border-white rounded-b-lg'>
+      <div className='p-3 sm:p-4 flex flex-col justify-between text-left flex-1 border-1 border-gray-700 rounded-b-lg'>
         <div>
           <div>
             <h2 className='text-base sm:text-lg font-semibold text-white line-clamp-1'>
@@ -60,8 +60,8 @@ const ProductCardButton = ({ item, onClick }: Props) => {
           <p className='font-medium'>{item.mileage.toLocaleString()} km</p>
         </div>
 
-        <button onClick={(e) => onClick(e, item)} className='mt-4 self-start cursor-pointer hover:scale-105'>
-          <span className='inline-block text-white text-sm px-3 py-1 rounded-md ring-1 ring-white hover:bg-gray-700'>
+        <button onClick={(e) => onClick(e, item)} className='mt-4 self-start cursor-pointer border-1 border-gray-600 rounded-lg hover:bg-gray-800 transition'>
+          <span className='inline-block text-white text-sm px-3 py-1 rounded-md hover:bg-gray-700'>
             Inquire
           </span>
         </button>
