@@ -1,4 +1,4 @@
-import { ProductWithSeller } from "@/services/products/vehicles"
+import { ProductWithSeller } from "@/services/products"
 
 export default function FinancingBadge({ type, className }: { type: ProductWithSeller['financing_option']; className?: string }) {
   switch (type) {
