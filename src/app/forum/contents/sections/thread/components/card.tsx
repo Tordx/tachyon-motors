@@ -22,7 +22,7 @@ const ThreadCard = (props: Props) => {
   return (
     <div
       key={id}
-      className="flex border-b-none sm:border-b-1 flex-col items-start justify-center p-4 gap-4 rounded-lg sm:rounded-none hover:bg-[#00000555] transition-all duration-150 cursor-pointer font-montserrat ring-white ring-2 sm:ring-0 my-4 md:my-0"
+      className="flex border-b-none sm:border-b-1 sm:border-b-gray-700 flex-col items-start justify-center p-4 gap-4 rounded-lg sm:rounded-none hover:bg-[#00000555] transition-all duration-150 cursor-pointer font-montserrat ring-gray-700 ring-2 sm:ring-0 my-4 md:my-0"
     >
       <div className="flex flex-row justify-between items-start  w-full">
         <Link className="group w-full" href={`/forum/${forum_id}`} passHref>

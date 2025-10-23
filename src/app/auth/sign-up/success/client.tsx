@@ -14,20 +14,24 @@ export default function SignUpSuccess() {
   const width = useWindowWidth();
 
   useEffect(() => {
-    const cameFromSignup = sessionStorage.getItem('signupSuccess')
-    if (cameFromSignup === 'true') {
-      setIsValid(true)
-      sessionStorage.removeItem('signupSuccess') // prevent re-entry
-    } else {
-      router.replace('/auth/login') // 🚫 direct visits get bounced
-    }
+    const timer = setTimeout(() => {
+      const cameFromSignup = sessionStorage.getItem('signupSuccess')
+      if (cameFromSignup === 'true') {
+        setIsValid(true)
+        sessionStorage.removeItem('signupSuccess')
+      } else {
+        router.replace('/auth/login')
+      }
+    }, 50)
+
+    return () => clearTimeout(timer)
   }, [router])
 
   if (!isValid) return null
 
   return (
     <div className="text-center p-10 font-montserrat">
-      <MailBox size={width <= 768 ? "" :"500"} />
+      <MailBox size={width <= 768 ? "" : "350"} />
       <h2 className="text-3xl font-semibold text-green-600 mt-4">🎉 Account Created!</h2>
       <p className="mt-2 text-gray-400">
         We’ve sent a verification link to <span className="text-white">{email}</span>.<br />

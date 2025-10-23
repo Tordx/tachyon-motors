@@ -30,6 +30,30 @@ export interface ForumContent {
   forum: Forum;
 }
 
+export interface ForumUser {
+  username: string;
+  image_name: string | null;
+}
+
+export interface ForumInteractionCounter {
+  id: number;
+  like_count: number;
+  comment_count: number;
+  share_count: number;
+  report_count: number;
+}
+
+export interface ForumContentResponse {
+  id: number;
+  forum_id: number;
+  title: string;
+  content: string;
+  is_current: boolean;
+  edited_at: string;
+  user: ForumUser | null;
+  interaction_counter: ForumInteractionCounter | null;
+}
+
 
 export interface Discussion {
   id: number;

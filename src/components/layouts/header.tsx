@@ -3,13 +3,14 @@ import React from 'react'
 import { AnimatePresence, motion, useAnimation } from 'framer-motion'
 import Locale from '../images/locale'
 import AppLogo from '../images/app-logo'
-import { redirect, usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Navigator from '../routing/navigator'
 import { NAVIGATION_LINKS } from '@/constants'
 import ChevronIcon from '../icons/chevron'
 import MobileNavigator from '../routing/mobile-navigator'
 import AccountCircle from '../icons/account-circle'
 import ArrowBack from '../icons/arrow-back'
+import { useAuth } from '@/context/auth-context'
 
 const Header = () => {
   const [isNavOpen, setIsNavOpen] = React.useState(false)
@@ -17,7 +18,8 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   const isVehiclePage = /^\/products\/vehicles\/\d+$/.test(pathname)
-  const controls = useAnimation()
+  const controls = useAnimation();
+  const {isAuthenticated} = useAuth();
 
   React.useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50)
@@ -35,6 +37,14 @@ const Header = () => {
       transition: { duration: 0.6, ease: 'easeOut' },
     })
   }, [isScrolled, isNavOpen, controls])
+
+  const handleNavigationPressed = () => {
+    if(isAuthenticated) {
+      router.push('/profile')
+    } else {
+      router.push('/auth/login')
+    }
+  }
 
   return (
     <motion.header
@@ -57,7 +67,7 @@ const Header = () => {
             </motion.button>
           }
           </AnimatePresence>
-          <AppLogo onClick={() => redirect('/home')} />
+          <AppLogo onClick={() => router.push('/home')} />
           <button
             style={{ WebkitBackdropFilter: 'blur(0px)' }} // for Safari
             className={`flex md:hidden transition-transform ${isNavOpen ? 'rotate-180' : 'rotate-0'
@@ -70,7 +80,7 @@ const Header = () => {
         <div className="hidden md:flex flex-row items-center gap-6">
           <Navigator item={NAVIGATION_LINKS} />
           <Locale />
-          <button className='cursor-pointer' onClick={() => { redirect('/auth/login') }}>
+          <button className='cursor-pointer' onClick={handleNavigationPressed}>
             <AccountCircle />
           </button>
         </div>

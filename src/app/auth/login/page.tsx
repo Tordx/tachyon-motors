@@ -1,5 +1,6 @@
 'use client'
 import AuthButton from '@/components/molecules/auth-buttons'
+import TextInput from '@/components/molecules/auth-input'
 import { useAuth } from '@/context/auth-context'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -13,8 +14,15 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await signIn(email, password)
-    if (error) setError(error)
+    const response = await signIn(email, password)
+    const data = response.data as { status: boolean, message: string}
+    if(!data.status) {
+      setError(data.message);
+      return;
+    } else {
+      window.location.href = '/home';
+    }
+
   }
 
   const handleRoute = (e: React.MouseEvent, path: string) => {
@@ -49,21 +57,20 @@ export default function LoginPage() {
       <div className="w-full xl:w-2/5 flex flex-col items-center justify-center p-10 bg-[#171717] font-montserrat">
         <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full max-w-sm">
           <h2 className="text-2xl font-semibold mb-4">Login</h2>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            className="p-2 border rounded"
+          <TextInput
+          label="Email Address"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email Address"
+          required
           />
-          <input
+           <TextInput
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             required
-            className="p-2 border rounded"
           />
           <AuthButton
             type="submit"

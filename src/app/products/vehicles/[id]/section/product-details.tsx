@@ -4,6 +4,7 @@ import InfoItem from '../components/info-item'
 import { ProductWithSeller } from '@/services/products'
 import FinancingBadge from '../components/financing-options'
 import formatCurrency from '@/utils/currency-format'
+import InfoIcon from '@/components/icons/info'
 
 type Props = {
   product: ProductWithSeller | null
@@ -12,6 +13,16 @@ type Props = {
 
 const ProductDetails = (props: Props) => {
   const { product, onClick } = props;
+  const [showDisclaimer, setShowDisclaimer] = React.useState(false);
+
+  const handleMouseEnter = () => {
+    setShowDisclaimer(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowDisclaimer(false);
+  };
+
   const STORAGE_BASE_URL = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL as string
 
   if (product === null) return null;
@@ -82,6 +93,22 @@ const ProductDetails = (props: Props) => {
               </p>
             </section>
           )}
+          {product.financing_option !== 'cash' && (
+            <section>
+              <h3 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-3">
+                Financing Requirements
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-gray-300 text-sm mt-4">
+                {product.downpayment !== 0 && <InfoItem label="Downpayment" value={"At least 20% of the price"} />}
+                <InfoItem label="Valid IDs" value={"2 Government-issued IDs"} />
+                <InfoItem label="Proof of Income" value={"3 Months Latest Payslip"} />
+                <InfoItem label="Employment" value={"Certificate of Employment with Compensation Details"} />
+                <InfoItem label="Bank Statements" value={"3 Months Latest Bank Statements"} />
+                <InfoItem label="Proof of Billing" value={"Water, Electric, Internet Bills"} />
+                <InfoItem label="Credit History" value={"CMAP/Replevin Approved"} />
+              </div>
+            </section>
+          )}
         </div>
 
         {/* Right Column - Seller/Price Card */}
@@ -90,9 +117,10 @@ const ProductDetails = (props: Props) => {
             <p className="text-3xl font-bold text-white mb-2">
               {formatCurrency(product.price)}
             </p>
-            {product.downpayment !== 0 && <p className="text-md font-normal text-gray-300 mb-4">
-              {formatCurrency(product.downpayment)} Downpayment
-            </p>}
+            {product.downpayment !== 0 && <div className="relative text-md font-normal text-gray-300 mb-4 flex items-center gap-2">
+              <span>{formatCurrency(product.downpayment)} Downpayment  </span><div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className='cursor-pointer'><InfoIcon /></div>
+              {showDisclaimer && <span className="bg-black p-3 text-xs text-gray-50 absolute top-10 rounded-sm">This is the minimum downpayment required but may vary based on credit approval.</span>}
+            </div>}
             <FinancingBadge type={product.financing_option} />
             <button onClick={onClick} className="w-full mt-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-semibold py-3 cursor-pointer rounded-lg hover:opacity-90 transition">
               Inquire Now

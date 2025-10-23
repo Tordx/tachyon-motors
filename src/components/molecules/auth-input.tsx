@@ -16,8 +16,8 @@ const AuthInput = React.forwardRef<HTMLInputElement, TextInputProps>(
         <input
           ref={ref}
           className={classNames(
-            'p-2 border rounded outline-none transition',
-            error ? 'border-red-500' : 'border-gray-300',
+            'bg-[#2a2a2a] rounded-md p-2 border border-gray-700 focus:outline-none focus:border-amber-500 transition',
+            error ? 'border-red-500' : 'border-gray-800',
             className
           )}
           {...props}

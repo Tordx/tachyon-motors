@@ -8,6 +8,7 @@ import AuthButton from '@/components/molecules/auth-buttons'
 export default function SignUpPage() {
   const { signUp } = useAuth()
   const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
@@ -21,8 +22,8 @@ export default function SignUpPage() {
       return
     }
 
-    const { error } = await signUp(email, password)
-    if (error) {
+    const res = await signUp(email, username, password) as { data: { status: boolean; message: string } }
+    if (res.data.status === false) {
       setError(error || 'Failed to sign up')
     } else {
       sessionStorage.setItem('signupSuccess', 'true') // ✅ mark valid entry
@@ -44,6 +45,15 @@ export default function SignUpPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email Address"
+          required
+        />
+
+        <TextInput
+          label="Username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
           required
         />
 

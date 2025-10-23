@@ -7,26 +7,56 @@ import { motion, AnimatePresence } from 'framer-motion'
 import CloseButton from '@/components/icons/close'
 import formatCurrency from '@/utils/currency-format'
 import FinancingBadge from '../[id]/components/financing-options'
+import InfoIcon from '@/components/icons/info'
 
 type InquiryModalProps = {
   open: boolean
-  onClose: () => void
+  onClose(): void
   vehicleDetails: (Product & { seller_name: string }) | ProductWithSeller | null
+  openSuccess(): void
 }
 
 const InquiryModal: React.FC<InquiryModalProps> = ({
   open,
   onClose,
   vehicleDetails,
+  openSuccess,
 }) => {
+  const [showInfo, setShowInfo] = useState(false);
   const [form, setForm] = useState({
     name: '',
     email: '',
     phone: '',
     message: '',
   })
+  const [status, setStatus] = useState('')
+
+  const handleMouseEnter = () => {
+    setShowInfo(true);
+  }
+
+  const handleMouseLeave = () => {
+    setShowInfo(false);
+  }
 
   if (!vehicleDetails) return null
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('Submitting...')
+
+    const res = await fetch('/api/form', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    })
+
+    const result = await res.json()
+    setForm({ name: '', email: '', phone: '', message: '' })
+    setStatus(result.error ? `Error: ${result.error}` : '✅ Form submitted successfully!');
+    onClose()
+    openSuccess()
+  }
 
   return (
     <AnimatePresence>
@@ -78,9 +108,9 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
             </div>
 
             {/* RIGHT: Inquiry Form */}
-            <div className="flex-1 p-6 md:p-8 overflow-y-auto">
-              <h2 className="text-2xl font-semibold mb-4">Inquiry Form</h2>
-
+            <div className="relative flex-1 p-6 md:p-8 overflow-y-auto">
+              <div className="text-2xl font-semibold mb-4  flex flex-row items-center gap-2"><span>Inquiry Form</span><div className='cursor-pointer' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}><InfoIcon /></div></div>
+              {showInfo && <p className="bg-black p-3 text-xs text-gray-50 mb-4 rounded-sm absolute">Please fill out the form below to send an inquiry about this vehicle. Our sales team will get back to you as soon as possible.</p>}
               <form
                 onSubmit={(e) => {
                   e.preventDefault()
@@ -111,8 +141,12 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
                   type="tel"
                   placeholder="Your Phone"
                   value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '') // Allow numbers only
+                    setForm({ ...form, phone: value })
+                  }}
                   required
+                  maxLength={11}
                   className="w-full p-2 rounded-md bg-[#2a2a2a] border border-gray-700 focus:outline-none focus:border-amber-500"
                 />
 
@@ -121,10 +155,12 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
                   rows={4}
-                  className="w-full p-2 rounded-md bg-[#2a2a2a] border border-gray-700 focus:outline-none focus:border-amber-500"
+                  className="w-full h-50  resize-none p-2 rounded-md bg-[#2a2a2a] border border-gray-700 focus:outline-none focus:border-amber-500"
                 />
-
-                <button className="w-full mt-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-semibold py-3 rounded-lg hover:opacity-90 transition">
+                <div className='h-3'>
+                {!status && <p className={`text-sm ${status !== 'Submitting...' ? "text-red-700" : "text-gray-400"}`}>{status}</p>}
+                </div>
+                <button onClick={handleSubmit} className="w-full mt-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-semibold py-3 rounded-lg hover:opacity-90 transition cursor-pointer">
                   Send Inquiry
                 </button>
               </form>

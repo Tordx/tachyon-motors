@@ -1,4 +1,5 @@
-import { ForumContent } from "@/types";
+import api from "@/lib/axios";
+import { ForumContent, ForumContentResponse } from "@/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export class ForumService {
@@ -16,19 +17,14 @@ export class ForumService {
   }
 
   static async getByForumId(
-    supabase: SupabaseClient,
     forumId: number
-  ): Promise<ForumContent[]> {
-    const { data, error } = await supabase
-      .from("forum_contents")
-      .select(`
-        *
-      `)
-      .eq("is_current", true)
-      .eq("forum_id", forumId)
-      .order("edited_at", { ascending: false });
-
-    if (error) throw error;
-    return data as ForumContent[];
+  ): Promise<ForumContentResponse> {
+    const response = await api.get('forum/getById', {
+      params: {
+        forumId
+      }
+    })
+    const data = response.data as ForumContentResponse[]
+    return data[0]
   }
 }
