@@ -43,7 +43,7 @@ export default function ForumClient({ discussionList }: { discussionList: Discus
 
   const handleInteractionPressed = async (item: string, id: number) => {
     if (!isAuthenticated) {
-      router.replace('?modal=login./')
+      router.replace('?modal=login')
       return;
     }
     if (item === 'cookie') {
