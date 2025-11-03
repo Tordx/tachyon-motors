@@ -28,6 +28,10 @@ export interface ForumContent {
   is_current: boolean;
   edited_at: string;
   forum: Forum;
+  like_count: number,
+  comment_count: number,
+  share_count: number
+  liked: boolean
 }
 
 export interface ForumUser {
@@ -36,11 +40,11 @@ export interface ForumUser {
 }
 
 export interface ForumInteractionCounter {
-  id: number;
+  id?: number;
   like_count: number;
   comment_count: number;
   share_count: number;
-  report_count: number;
+  report_count?: number;
 }
 
 export interface ForumContentResponse {
@@ -52,6 +56,7 @@ export interface ForumContentResponse {
   edited_at: string;
   user: ForumUser | null;
   interaction_counter: ForumInteractionCounter | null;
+  liked: boolean
 }
 
 

@@ -6,19 +6,29 @@ import Interaction from "./interactions";
 import InteractionButton from "./button";
 import More from "@/components/icons/more";
 import ReportButton from "./report-button";
+import { useAuth } from "@/context/auth-context";
 
 type Props = {
   item: ForumContent;
+  onClick(type: string, id: number): void;
 };
 const ThreadCard = (props: Props) => {
-  const { id, title, content, edited_at, is_current, forum_id } = props.item;
+  const {onClick} = props;
+  const { id, title, content, edited_at, is_current, forum_id, like_count, liked, comment_count, share_count } = props.item;
+  const {isAuthenticated} = useAuth();
 
   const [isMoreOpen, setIsMoreOpen] = useState<boolean>(false);
-
+  const [iLike, setILike] = useState<boolean>(liked);
   function handleOpenMore() {
     setIsMoreOpen(!isMoreOpen)
   }
 
+  const handleInteractionPressed = (type: string) => {
+    if(isAuthenticated) {
+      setILike(!iLike)
+    }
+    onClick(type, forum_id); 
+  }
   return (
     <div
       key={id}
@@ -50,7 +60,7 @@ const ThreadCard = (props: Props) => {
           </div>}
         </div>
       </div>
-      <Interaction handleOpenMore={handleOpenMore} isMoreOpen={isMoreOpen} />
+      <Interaction onClick={handleInteractionPressed} liked={iLike} counters={{like_count, comment_count, share_count}} handleOpenMore={handleOpenMore} isMoreOpen={isMoreOpen} />
     </div>
   );
 };

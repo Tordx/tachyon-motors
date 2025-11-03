@@ -1,18 +1,10 @@
 import api from "@/lib/axios";
 import { ForumContent, ForumContentResponse } from "@/types";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 export class ForumService {
-  static async getAllCurrent(supabase: SupabaseClient): Promise<ForumContent[]> {
-    const { data, error } = await supabase
-      .from("forum_contents")
-      .select(`
-        *,
-        forum:forum_id (id, created_at)
-      `)
-      .eq("is_current", true);
-
-    if (error) throw error;
+  static async getAllCurrent(): Promise<ForumContent[]> {
+    const response = await api.get('forum');
+    const data = response.data
     return data as ForumContent[];
   }
 

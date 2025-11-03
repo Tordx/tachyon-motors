@@ -12,10 +12,4 @@ const api = axios.create({
   paramsSerializer: params => qs.stringify(params, { arrayFormat: 'indices' }),
 })
 
-api.interceptors.request.use(config => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
-  if (token) config.headers.Authorization = `Bearer ${token}`
-  return config
-})
-
 export default api

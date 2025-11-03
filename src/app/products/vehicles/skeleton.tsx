@@ -3,7 +3,7 @@ import React from 'react'
 const ProductCardButtonSkeleton = () => {
   return (
     <div
-      className='bg-gray-800 bg-gradient-to-t from-black via-transparent to-transparent animate-pulse w-full flex flex-col rounded-lg overflow-hidden'
+      className='bg-gray-700 animate-pulse w-full flex flex-col rounded-lg overflow-hidden'
     >
       {/* TOP: Image */}
       <div className='relative w-full h-80 sm:h-88 md:h-94 lg:h-104'>

@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error('Sign-in error:', error)
-      return NextResponse.json({ status: false, error: error.message }, { status: 401 })
+      return NextResponse.json({ status: false, message: error.message }, { status: 401 })
     }
 
     return NextResponse.json({ status: true, message: 'Login Success', user: data.user }, { status: 200 })

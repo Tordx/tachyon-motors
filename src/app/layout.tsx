@@ -1,9 +1,12 @@
+
 import Header from "@/components/layouts/header";
 import { Montserrat } from "next/font/google";
 
 import "./globals.css";
 import { Metadata } from "next";
 import { AuthProvider } from "../context/auth-context";
+import LoginModal from "./auth/components/login-modal";
+import { Suspense } from "react";
 const geistSans = Montserrat({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -21,6 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
+
+
   return (
     <html lang="en">
       <body
@@ -31,6 +36,10 @@ export default function RootLayout({
             <Header />
             {children}
           </main>
+          <Suspense fallback={null}>
+
+            <LoginModal />
+          </Suspense>
         </AuthProvider>
       </body>
     </html>

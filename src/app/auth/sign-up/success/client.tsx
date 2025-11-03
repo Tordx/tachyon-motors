@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import AuthButton from '@/components/molecules/auth-buttons'
 import { useWindowWidth } from '@/utils/use-window-width'
@@ -30,16 +30,18 @@ export default function SignUpSuccess() {
   if (!isValid) return null
 
   return (
-    <div className="text-center p-10 font-montserrat">
-      <MailBox size={width <= 768 ? "" : "350"} />
-      <h2 className="text-3xl font-semibold text-green-600 mt-4">🎉 Account Created!</h2>
-      <p className="mt-2 text-gray-400">
-        We’ve sent a verification link to <span className="text-white">{email}</span>.<br />
-        Please check your inbox to verify your account before logging in.
-      </p>
-      <div className="mt-6">
-        <AuthButton onClick={() => router.push('/login')}>Go to Login</AuthButton>
+    <Suspense>
+      <div className="text-center p-10 font-montserrat">
+        <MailBox size={width <= 768 ? "" : "350"} />
+        <h2 className="text-3xl font-semibold text-green-600 mt-4">🎉 Account Created!</h2>
+        <p className="mt-2 text-gray-400">
+          We’ve sent a verification link to <span className="text-white">{email}</span>.<br />
+          Please check your inbox to verify your account before logging in.
+        </p>
+        <div className="mt-6">
+          <AuthButton onClick={() => router.push('/login')}>Go to Login</AuthButton>
+        </div>
       </div>
-    </div>
+    </Suspense>
   )
 }

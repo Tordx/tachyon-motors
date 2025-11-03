@@ -1,8 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export async function createClient() {
   const cookieStore = await cookies();
+  const headerStore = headers();
+  const authHeader = (await headerStore).get("authorization") || "";
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,6 +20,11 @@ export async function createClient() {
           } catch {
             // ignore — safe in server components
           }
+        },
+      },
+      global: {
+        headers: {
+          Authorization: authHeader, // ✅ This line is the key
         },
       },
     }

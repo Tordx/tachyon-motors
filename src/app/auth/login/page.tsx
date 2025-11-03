@@ -2,6 +2,7 @@
 import AuthButton from '@/components/molecules/auth-buttons'
 import TextInput from '@/components/molecules/auth-input'
 import { useAuth } from '@/context/auth-context'
+import { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -14,13 +15,20 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await signIn(email, password)
-    const data = response.data as { status: boolean, message: string}
-    if(!data.status) {
-      setError(data.message);
-      return;
-    } else {
-      window.location.href = '/home';
+    setError('');
+    try {
+      const response = await signIn(email, password)
+      const data = response.data as { status: boolean, message: string }
+      if (!data.status) {
+        setError(data.message);
+        return;
+      } else {
+        window.location.href = '/home';
+      }
+    } catch (err) {
+      const errorResponse = err as AxiosError<{ message?: string }>
+      const errorMessage = errorResponse?.response?.data?.message || 'An error occurred';
+      setError(errorMessage);
     }
 
   }
@@ -32,7 +40,6 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Left side: video section */}
       <div className="w-3/5 relative overflow-hidden hidden xl:block">
         <video
           autoPlay
@@ -52,20 +59,18 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-
-      {/* Right side: login form */}
       <div className="w-full xl:w-2/5 flex flex-col items-center justify-center p-10 bg-[#171717] font-montserrat">
         <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full max-w-sm">
           <h2 className="text-2xl font-semibold mb-4">Login</h2>
           <TextInput
-          label="Email Address"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email Address"
-          required
+            label="Email Address"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email Address"
+            required
           />
-           <TextInput
+          <TextInput
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -78,8 +83,10 @@ export default function LoginPage() {
           >
             {loading ? 'Loading...' : 'Sign In'}
           </AuthButton>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          <button onClick={(e) => {handleRoute(e, '/auth/forgot-password')}} className='text-white cursor-pointer'>Forgot Password?</button>
+          <div className='h-3'>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+          </div>
+          <button onClick={(e) => { handleRoute(e, '/auth/forgot-password') }} className='text-white cursor-pointer'>Forgot Password?</button>
         </form>
         <p className='text-white mt-6'>No Account yet? <button className='text-blue-500 cursor-pointer' onClick={(e) => handleRoute(e, '/auth/sign-up')}>Sign up Now</button></p>
       </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { notFound, useRouter, useSearchParams } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import Startled from '@/components/illustrations/startled'
@@ -18,7 +18,7 @@ export default function VerifyPage() {
     const token_hash = searchParams.get('token_hash')
     const type = searchParams.get('type') as 'signup' | 'magiclink' | 'invite' | 'recovery' | 'email_change' | null
 
-     if(type === null) {
+    if (type === null) {
       setStatus('null')
       notFound()
     }
@@ -38,34 +38,36 @@ export default function VerifyPage() {
   if (status === 'loading')
     return <p className="text-gray-500 font-montserrat">Verifying your email...</p>
 
-  if(status === null) {
+  if (status === null) {
 
   }
 
   if (status === 'success')
     return (
       <div className="text-center p-10 font-montserrat">
-      <HappyNews size={window >= 768 ? '500' : ''} />
-      <h2 className="text-3xl font-semibold text-green-600 mt-4">🎉 Successfully Verified!</h2>
-      <p className="mt-2 text-gray-400">
-        You can now participate in forums, create new topics, ask questions and more!
-      </p>
-      <div className="mt-6">
-        <AuthButton onClick={() => router.push('/auth/login')}>Go to Login</AuthButton>
+        <HappyNews size={window >= 768 ? '500' : ''} />
+        <h2 className="text-3xl font-semibold text-green-600 mt-4">🎉 Successfully Verified!</h2>
+        <p className="mt-2 text-gray-400">
+          You can now participate in forums, create new topics, ask questions and more!
+        </p>
+        <div className="mt-6">
+          <AuthButton onClick={() => router.push('/auth/login')}>Go to Login</AuthButton>
+        </div>
       </div>
-    </div>
     )
 
   return (
-    <div className="text-center p-10 font-montserrat">
-      <Startled size={window >= 768 ? '500' : ''} />
-      <h2 className="text-3xl font-semibold text-red-600 mt-4">Invalid or Expired!</h2>
-      <p className="mt-2 text-gray-400">
-        This verification link might be invalid or expired.
-      </p>
-      <div className="mt-6">
-        <AuthButton onClick={() => router.push('/home')}>Go to Home Page</AuthButton>
+    <Suspense>
+      <div className="text-center p-10 font-montserrat">
+        <Startled size={window >= 768 ? '500' : ''} />
+        <h2 className="text-3xl font-semibold text-red-600 mt-4">Invalid or Expired!</h2>
+        <p className="mt-2 text-gray-400">
+          This verification link might be invalid or expired.
+        </p>
+        <div className="mt-6">
+          <AuthButton onClick={() => router.push('/home')}>Go to Home Page</AuthButton>
+        </div>
       </div>
-    </div>
+    </Suspense>
   )
 }
