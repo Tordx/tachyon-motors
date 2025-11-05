@@ -1,74 +1,94 @@
 'use client'
 
-import Image from 'next/image'
-import { formatDistanceToNow } from 'date-fns'
 import { useEffect, useState } from 'react'
-import { ForumContentResponse } from '@/types'
-import Interaction from '../contents/sections/thread/components/interactions'
+import { ForumCommentResponse, ForumContentResponse } from '@/types'
 import { InteractionsServices } from '@/services/interactions'
 import axios from 'axios'
 import { useAuth } from '@/context/auth-context'
 import { ForumService } from '@/services/forum'
 import { useRouter } from 'next/navigation'
 import Loading from './loading'
+import AuthorSection from './sections/author'
+import ContentSection from './sections/content'
+import CommentSection from './sections/comments'
 
 const ForumItem = ({ id }: { id: string }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth()
   const [forumDetails, setForumDetails] = useState<ForumContentResponse | null>(null)
+  const [comments, setComments] = useState<ForumCommentResponse[]>([])
+  const [commentLoading, setCommentLoading] = useState<boolean>(false)
+  const [newComment, setNewComment] = useState('')
+  const [replyInputs, setReplyInputs] = useState<Record<number, string>>({})
+  const [commentReplies, setCommentReplies] = useState<Record<number, ForumCommentResponse[]>>({});
+  const [openReplies, setOpenReplies] = useState<Record<number, boolean>>({});
+  const [commentsRepliesLoading, setCommentsRepliesLoading] = useState<Record<number, boolean>>({});
   const [iLiked, setILiked] = useState<boolean>(false)
-  const router = useRouter();
-  const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter()
+  const [loading, setLoading] = useState<boolean>(true)
+  const BUCKET_URL = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
+
 
   useEffect(() => {
-  const fetchData = async () => {
+    fetchData()
+    fetchComments()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
+
+  const fetchComments = async () => {
     try {
-      setLoading(true);
-      const response = await ForumService.getByForumId(Number(id));
-      setForumDetails(response || null);
-      if (response?.liked) setILiked(response.liked);
+      setCommentLoading(true)
+      const response = await ForumService.getForumComments(Number(id))
+      setComments(response)
     } catch (error) {
-      console.error(error);
-      setForumDetails(null);
+      console.error(error)
     } finally {
-      setLoading(false);
+      setCommentLoading(false)
     }
-  };
-
-  fetchData();
-}, [id]);
-
-
-  if (loading) 
-    return <Loading />
-  
-  if (!forumDetails) {
-    return (
-      <div className="max-w-3xl mx-auto py-20 text-center text-gray-400 font-montserrat">
-        <p>No forum content found.</p>
-      </div>
-    )
   }
 
-
-  const timeAgo = forumDetails.edited_at
-    ? formatDistanceToNow(new Date(forumDetails.edited_at), { addSuffix: true })
-    : null
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      const response = await ForumService.getByForumId(Number(id))
+      setForumDetails(response || null)
+      if (response?.liked) setILiked(response.liked)
+    } catch (error) {
+      console.error(error)
+      setForumDetails(null)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleInteractionPressed = async (item: string) => {
     if (!isAuthenticated) {
       router.replace('?modal=login')
-      return;
+      return
     }
-    if (item === 'cookie') {
 
+    if (item === 'cookie') {
+      const increment = iLiked ? -1 : 1
       setILiked(!iLiked)
+      setForumDetails((prev) =>
+        prev
+          ? {
+            ...prev,
+            interaction_counter: {
+              ...prev.interaction_counter,
+              like_count: (prev.interaction_counter?.like_count ?? 0) + increment,
+              comment_count: prev.interaction_counter?.comment_count ?? 0,
+              share_count: prev.interaction_counter?.share_count ?? 0,
+              report_count: prev.interaction_counter?.report_count ?? 0,
+            },
+          }
+          : prev
+      )
       try {
-        await InteractionsServices.cookie(forumDetails.forum_id)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (err: any) {
+        await InteractionsServices.cookie(forumDetails!.forum_id)
+      } catch (err) {
         if (axios.isAxiosError(err)) {
           if (err.response?.status === 401) {
-
+            router.replace('?modal=login')
           } else {
             console.error('API Error:', err)
           }
@@ -79,48 +99,120 @@ const ForumItem = ({ id }: { id: string }) => {
     }
   }
 
+  const handleAddComment = async () => {
+    if (!isAuthenticated) {
+      router.replace('?modal=login')
+      return
+    }
+
+    if (!newComment.trim()) return
+    try {
+      await ForumService.addForumComment(Number(id), newComment)
+      setNewComment('')
+      fetchComments()
+      setForumDetails((prev) =>
+        prev
+          ? {
+            ...prev,
+            interaction_counter: {
+              ...prev.interaction_counter,
+              like_count: prev.interaction_counter?.like_count ?? 0,
+              comment_count: (prev.interaction_counter?.comment_count ?? 0) + 1,
+              share_count: prev.interaction_counter?.share_count ?? 0,
+              report_count: prev.interaction_counter?.report_count ?? 0,
+            },
+          }
+          : prev
+      )
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleAddReply = async (commentId: number) => {
+    if (!isAuthenticated) {
+      router.replace('?modal=login')
+      return
+    }
+
+    const reply = replyInputs[commentId]?.trim()
+    if (!reply) return
+    try {
+      await ForumService.addCommentReply(commentId, reply)
+      setReplyInputs((prev) => ({ ...prev, [commentId]: '' }))
+      fetchComments()
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const toggleReplies = async (commentId: number) => {
+    setOpenReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId], // toggle only this comment
+    }));
+
+    // if replies already loaded, skip refetch
+    if (commentReplies[commentId]) return;
+
+    try {
+      setCommentsRepliesLoading((prev) => ({ ...prev, [commentId]: true }));
+
+      const response = await ForumService.getCommentReplies(commentId);
+      if (response?.length) {
+        setCommentReplies((prev) => ({ ...prev, [commentId]: response }));
+      } else {
+        setCommentReplies((prev) => ({ ...prev, [commentId]: [] }));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCommentsRepliesLoading((prev) => ({ ...prev, [commentId]: false }));
+    }
+  };
+
+  if (loading) return <Loading />
+
+  if (!forumDetails)
+    return (
+      <div className="max-w-3xl mx-auto py-20 text-center text-gray-400 font-montserrat">
+        <p>No forum content found.</p>
+      </div>
+    )
+
+
 
   return (
-    <div className="w-full h-full max-w-7xl flex flex-col justify-start mx-auto py-10 px-4 font-montserrat text-gray-100">
-      <div className="flex items-center gap-3 mb-6">
-        {forumDetails.user?.image_name ? (
-          <Image
-            src={forumDetails.user.image_name}
-            alt={forumDetails.user.username}
-            width={48}
-            height={48}
-            className="rounded-full object-cover border border-gray-700"
-          />
-        ) : (
-          <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-lg font-semibold text-gray-300">
-            {forumDetails.user?.username?.[0]?.toUpperCase() ?? '?'}
-          </div>
-        )}
+    <div className="fixed pt-25 inset-0 overflow-y-auto bg-black text-gray-100 font-montserrat">
+      <div className="w-full max-w-4xl mx-auto py-10 px-4">
 
-        <div>
-          <h2 className="font-semibold text-lg">{forumDetails.user?.username}</h2>
-          <p className="text-sm text-gray-400">
-            {timeAgo ? `Edited ${timeAgo}` : 'Recently edited'}
-          </p>
-        </div>
+        {/* Forum Author */}
+        <AuthorSection forumDetails={forumDetails} bucket_url={BUCKET_URL} />
+        {/* Forum Content */}
+        <ContentSection forumDetails={forumDetails} iLiked={iLiked} handleInteractionPressed={handleInteractionPressed} />
+        {/* Comments Section */}
+        <CommentSection
+          comments={comments}
+          commentLoading={commentLoading}
+          commentReplies={commentReplies}
+          commentsRepliesLoading={commentsRepliesLoading}
+          newComment={newComment}
+          setNewComment={setNewComment}
+          handleAddComment={handleAddComment}
+          toggleReplies={toggleReplies}
+          openReplies={openReplies}
+          isAuthenticated={isAuthenticated}
+          handleAddReply={handleAddReply}
+          bucket_url={BUCKET_URL}
+          replyInputs={replyInputs}
+          setReplyInputs={(id, e) =>
+            setReplyInputs((prev) => ({
+              ...prev,
+              [id]: e,
+            }))} />
       </div>
-      <h1 className="text-3xl font-bold text-white mb-4 leading-tight">
-        {forumDetails.title}
-      </h1>
-      <div className="bg-[#1a1a1a] text-gray-200 rounded-2xl p-6 leading-relaxed shadow-md border border-gray-800">
-        {forumDetails.content?.split('\n').map((line, i) => (
-          <p key={i} className="mb-3 last:mb-0">
-            {line}
-          </p>
-        ))}
-      </div>
-      {forumDetails.interaction_counter && (
-        <div className="flex flex-wrap items-center gap-6 mt-6 text-sm text-gray-400">
-          <Interaction liked={iLiked} handleOpenMore={() => { }} isMoreOpen={false} onClick={handleInteractionPressed} counters={forumDetails.interaction_counter} />
-        </div>
-      )}
     </div>
   )
 }
 
-export default ForumItem;
+export default ForumItem

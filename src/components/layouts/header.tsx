@@ -18,6 +18,7 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   const isVehiclePage = /^\/products\/vehicles\/\d+$/.test(pathname)
+  const isForumPage = /^\/forum\/\d+$/.test(pathname)
   const controls = useAnimation();
   const {isAuthenticated} = useAuth();
 
@@ -55,7 +56,7 @@ const Header = () => {
       <div className={`w-full h-16 px-4 md:px-10 2xl:px-auto text-white flex items-center justify-center sm:justify-between ${isVehiclePage ? 'bg-black/30 lg:bg-black/0' : ''}`}>
         <div className="z-30 w-full md:w-auto flex flex-row items-center justify-between cursor-pointer gap-2  sm:mt-0">
           <AnimatePresence>
-          {isVehiclePage &&
+          {(isVehiclePage || isForumPage) &&
             <motion.button
               onClick={() => router.back()}
               initial={{ x: -100 }}

@@ -6,42 +6,62 @@ import React, { useEffect, useState } from 'react'
 import TextInput from '@/components/molecules/auth-input'
 import AuthButton from '@/components/molecules/auth-buttons'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useAuth } from '@/context/auth-context'
+import { AxiosError } from 'axios'
 
 const LoginModal = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
-
+  const [error, setError] = useState('')
   const router = useRouter()
   const params = useSearchParams()
   const modal = params.get('modal')
 
+  const { signIn, isAuthenticated } = useAuth();
+
   useEffect(() => {
-    setOpen(modal === 'login')
-  }, [modal])
+    if (isAuthenticated) {
+      setOpen(false)
+      cleanUrl()
+    } else {
+      setOpen(modal === 'login')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modal, isAuthenticated])
 
   const cleanUrl = () => {
     router.replace(window.location.pathname, { scroll: false })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setError('')
     e.preventDefault()
     if (!email || !password) return
     setLoading(true)
 
     try {
-      // simulate login
-      await new Promise((res) => setTimeout(res, 800))
+      const response = await signIn(email, password)
+      const data = response.data as { status: boolean, message: string }
+      if (!data.status) {
+        setError(data.message);
+        return;
+      } else {
+        window.location.reload();
+      }
+    } catch (err) {
+      const errorResponse = err as AxiosError<{ message?: string }>
+      const errorMessage = errorResponse?.response?.data?.message || 'An error occurred';
+      setError(errorMessage);
     } finally {
       setLoading(false)
-      cleanUrl()
-      setOpen(false)
     }
   }
 
   const handleClose = () => {
     cleanUrl()
+    setError('')
     setOpen(false)
   }
 
@@ -93,7 +113,8 @@ const LoginModal = () => {
                   {loading ? 'Loading...' : 'Sign In'}
                 </AuthButton>
               </form>
-              <button onClick={(e) => {e.preventDefault(); router.push('/auth/forgot-password') }} className='text-white cursor-pointer'>Forgot Password?</button>
+              {error && <div className='text-xs text-red-500 text-left w-full'>{error}</div>}
+              <button onClick={(e) => { e.preventDefault(); router.push('/auth/forgot-password') }} className='text-white cursor-pointer'>Forgot Password?</button>
               <div className="text-gray-500 text-sm mt-3">
                 Don’t have an account?{' '}
                 <span onClick={() => router.push('/auth/sign-up')} className="text-white hover:underline cursor-pointer">Sign up</span>

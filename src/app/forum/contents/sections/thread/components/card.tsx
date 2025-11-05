@@ -25,7 +25,7 @@ const ThreadCard = (props: Props) => {
 
   const handleInteractionPressed = (type: string) => {
     if(isAuthenticated) {
-      setILike(!iLike)
+      if(type === 'cookie') setILike(!iLike)
     }
     onClick(type, forum_id); 
   }

@@ -8,6 +8,7 @@ import CloseButton from '@/components/icons/close'
 import formatCurrency from '@/utils/currency-format'
 import FinancingBadge from '../[id]/components/financing-options'
 import InfoIcon from '@/components/icons/info'
+import { useAuth } from '@/context/auth-context'
 
 type InquiryModalProps = {
   open: boolean
@@ -29,7 +30,8 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
     phone: '',
     message: '',
   })
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState('');
+  const { isAuthenticated } = useAuth();
 
   const handleMouseEnter = () => {
     setShowInfo(true);
@@ -119,23 +121,29 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
                 }}
                 className="space-y-3"
               >
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  required
-                  className="w-full p-2 rounded-md bg-[#2a2a2a] border border-gray-700 focus:outline-none focus:border-amber-500"
-                />
+                {!isAuthenticated &&
+                  (
+                    <>
+                      <input
+                        type="text"
+                        placeholder="Your Name"
+                        value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        required
+                        className="w-full p-2 rounded-md bg-[#2a2a2a] border border-gray-700 focus:outline-none focus:border-amber-500"
+                      />
 
-                <input
-                  type="email"
-                  placeholder="Your Email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  required
-                  className="w-full p-2 rounded-md bg-[#2a2a2a] border border-gray-700 focus:outline-none focus:border-amber-500"
-                />
+                      <input
+                        type="email"
+                        placeholder="Your Email"
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        required
+                        className="w-full p-2 rounded-md bg-[#2a2a2a] border border-gray-700 focus:outline-none focus:border-amber-500"
+                      />
+                    </>
+                  )
+                }
 
                 <input
                   type="tel"
@@ -158,7 +166,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
                   className="w-full h-50  resize-none p-2 rounded-md bg-[#2a2a2a] border border-gray-700 focus:outline-none focus:border-amber-500"
                 />
                 <div className='h-3'>
-                {!status && <p className={`text-sm ${status !== 'Submitting...' ? "text-red-700" : "text-gray-400"}`}>{status}</p>}
+                  {!status && <p className={`text-sm ${status !== 'Submitting...' ? "text-red-700" : "text-gray-400"}`}>{status}</p>}
                 </div>
                 <button onClick={handleSubmit} className="w-full mt-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-semibold py-3 rounded-lg hover:opacity-90 transition cursor-pointer">
                   Send Inquiry

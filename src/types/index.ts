@@ -59,6 +59,17 @@ export interface ForumContentResponse {
   liked: boolean
 }
 
+export interface ForumCommentResponse {
+  id: number;
+  comment_id?: number;
+  created_at: string;
+  content: string;
+  user: {
+    username: string;
+    image_name: string;
+  };
+  reply_count?: number;
+}
 
 export interface Discussion {
   id: number;

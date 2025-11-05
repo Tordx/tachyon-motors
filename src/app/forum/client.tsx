@@ -42,14 +42,19 @@ export default function ForumClient({ discussionList }: { discussionList: Discus
   const openMobileDiscussion = () => { setMobileDiscussionOpen(prev => !prev) }
 
   const handleInteractionPressed = async (item: string, id: number) => {
-    if (!isAuthenticated) {
-      router.replace('?modal=login')
-      return;
+
+
+    if (item === 'comments') {
+      router.push(`forum/${id}`)
     }
     if (item === 'cookie') {
+      if (!isAuthenticated) {
+        router.replace('?modal=login')
+        return;
+      }
       try {
 
-       await InteractionsServices.cookie(id)
+        await InteractionsServices.cookie(id)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         if (axios.isAxiosError(err)) {

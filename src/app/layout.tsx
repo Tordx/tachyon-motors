@@ -37,7 +37,7 @@ export default function RootLayout({
             {children}
           </main>
           <Suspense fallback={null}>
-
+            
             <LoginModal />
           </Suspense>
         </AuthProvider>

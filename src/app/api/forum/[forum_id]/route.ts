@@ -1,13 +1,20 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const forumId = Number(searchParams.get("forumId"));
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export async function GET(
+  _req: NextRequest,
+  context: { params: Promise<{ forum_id: string }> }
+) {
+  const { forum_id } = await context.params;
+  const forumId = Number(forum_id);
 
   if (!forumId) {
     return NextResponse.json(
-      { error: "Missing forumId parameter" },
+      { error: "Missing or invalid forum_id parameter" },
       { status: 400 }
     );
   }
@@ -58,7 +65,6 @@ export async function GET(req: Request) {
     );
   }
 
-  // 🟢 Safely extract interaction_counter IDs
   const interactionCounterIds =
     data
       ?.map((fc) => {
@@ -73,8 +79,8 @@ export async function GET(req: Request) {
       })
       .filter(Boolean) || [];
 
-  // 🟢 If no user or user error, skip lookup and just mark liked as false
   let likedInteractions: number[] = [];
+
   if (!user || userError) {
     const formattedData =
       data?.map((fc) => {
@@ -129,14 +135,12 @@ export async function GET(req: Request) {
     }
   }
 
-  // 🟢 Format final data safely
   const formattedData =
     data?.map((fc) => {
       const forumItem = Array.isArray(fc.forum) ? fc.forum[0] : fc.forum;
       const forumUser = Array.isArray(forumItem?.users)
         ? forumItem.users[0]
         : forumItem?.users;
-
       const interactionCounter = Array.isArray(forumItem?.interaction_counter)
         ? forumItem.interaction_counter[0]
         : forumItem?.interaction_counter;
