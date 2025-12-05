@@ -39,7 +39,7 @@ const ProductPageClient: React.FC<Props> = ({ product, suggested }) => {
 
   return (
     <div className="min-h-screen w-full flex flex-col justify-center items-center text-white font-montserrat">
-      <ProductDetails onClick={(e) => handleInquireClick(e)} product={product} />
+      <ProductDetails onClick={(e) => handleInquireClick(e)} onShare={(id, e) => {setProductId(id); setShareOpen(true); e?.preventDefault()}} product={product}  />
       <SuggestedProducts data={suggested} selectedItem={(item) => router.push(`/products/vehicles/${item.id}`)} onClick={() => setOpenModal(true)} onShare={(id, e) => {setProductId(id); setShareOpen(true); e?.preventDefault()}} />
       <SuccessForm open={openSuccess} onClose={() => setOpenSuccess(false)} />
 

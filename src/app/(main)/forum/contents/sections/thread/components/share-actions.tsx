@@ -20,27 +20,30 @@ type Props = {
 
 const ShareAction = ({ open, onClose, shareUrl, title, description, forumId }: Props) => {
   const encodedTitle = encodeURIComponent(title || '')
-  console.log(forumId)
+
+const baseUrl = shareUrl.replace(/\/$/, '')
+const sanitizedUrl = baseUrl.replace(/\/\d+$/, '')
+const finalShareUrl = `${sanitizedUrl}/${forumId}`
   const shareOptions = [
     {
       name: 'Facebook',
       icon: <FaceBookIcon/>,
-      url: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}/${forumId}`,
+      url: `https://www.facebook.com/sharer/sharer.php?u=${finalShareUrl}`,
     },
     {
       name: 'Messenger',
       icon: <MessengerIcon/>,
-      url: `fb-messenger://share/?link=${shareUrl}/${forumId}`,
+      url: `fb-messenger://share/?link=${finalShareUrl}`,
     },
     {
       name: 'Twitter',
       icon: <TwitterIcon/>,
-      url: `https://twitter.com/intent/tweet?url=${shareUrl}/${forumId}&text=${encodedTitle}`,
+      url: `https://twitter.com/intent/tweet?url=${finalShareUrl}&text=${encodedTitle}`,
     },
     {
       name: 'WhatsApp',
       icon: <WhatsappIcon />,
-      url: `https://api.whatsapp.com/send?text=${encodedTitle}%20${shareUrl}/${forumId}`,
+      url: `https://api.whatsapp.com/send?text=${encodedTitle}%20${finalShareUrl}`,
     },
   ]
 
@@ -49,7 +52,7 @@ const ShareAction = ({ open, onClose, shareUrl, title, description, forumId }: P
   }
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(`${shareUrl}/${forumId}`);
+    await navigator.clipboard.writeText(`${finalShareUrl}`);
   }
 
   return (

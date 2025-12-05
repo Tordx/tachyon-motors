@@ -11,10 +11,11 @@ import Share from '@/components/icons/share'
 type Props = {
   product: ProductWithSeller | null
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onShare: (id: number, e?: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const ProductDetails = (props: Props) => {
-  const { product, onClick } = props;
+  const { product, onClick, onShare } = props;
   const [showDisclaimer, setShowDisclaimer] = React.useState(false);
 
   const handleMouseEnter = () => {
@@ -46,7 +47,7 @@ const ProductDetails = (props: Props) => {
             {product.name}
           </h1>
               <div className='w-auto h-auto'>
-                    <InteractionButton onClick={() => {}}> <Share /></InteractionButton>
+                    <InteractionButton onClick={(e) => onShare(product.id, e)}> <Share /></InteractionButton>
 
           </div>
           </div>
