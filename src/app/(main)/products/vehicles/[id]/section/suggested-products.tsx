@@ -8,10 +8,11 @@ type Props = {
   data: (Product & { seller_name: string })[] | null;
   selectedItem(item: Product & { seller_name: string }): void;
   onClick(): void;
+  onShare(id: number, e?: React.MouseEvent<HTMLButtonElement>): void;
 }
 
 const ProductList = (props: Props) => {
-  const { data, selectedItem, onClick } = props;
+  const { data, selectedItem, onClick, onShare } = props;
   const [products, setProducts] = useState<(Product & { seller_name: string })[]>([])
   const STORAGE_BASE_URL = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL as string
 
@@ -51,7 +52,7 @@ const ProductList = (props: Props) => {
       <div className='py-4 text-2xl font-bold'>You may Also Like </div>
       <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-8 p-4'>
         {products.map((item) => (
-          <ProductCardButton key={item.id} item={item} onClick={handleSelectedItem} />
+          <ProductCardButton key={item.id} item={item} onClick={handleSelectedItem} onShare={(e) => onShare(item.id, e)} />
         ))}
       </div>
     </section>
