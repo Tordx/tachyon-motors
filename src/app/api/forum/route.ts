@@ -43,7 +43,6 @@ export async function GET() {
 
     if (countsError) throw countsError;
 
-    // ✅ If not logged in, return defaults
     if (userError || !user) {
       const mergedData = (forumContents ?? []).map((content) => {
         const counts = interactionCounts?.find(
@@ -64,7 +63,6 @@ export async function GET() {
 
     const userId = user.id;
 
-    // ✅ Get user interactions (make sure relation name is correct)
     const { data: rawUserInteractions, error: userIntError } = await supabase
       .from("interactions")
       .select(`
@@ -84,7 +82,6 @@ export async function GET() {
       })
     );
 
-    // ✅ Merge data with liked field
     const mergedData = (forumContents ?? []).map((content) => {
       const counts = interactionCounts?.find(
         (c) => c.forum_id === content.forum_id

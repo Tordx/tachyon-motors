@@ -7,6 +7,7 @@ import ProductFilters from '@/components/molecules/search-input';
 import InquiryModal from './contents/form';
 import SuccessForm from './contents/success';
 import { FilterProps } from '@/types';
+import ShareAction from '@/app/(main)/forum/contents/sections/thread/components/share-actions';
 
 const ProductClient = (props: { initialData: (Product & { seller_name: string })[] }) => {
   const { initialData } = props;
@@ -22,17 +23,17 @@ const ProductClient = (props: { initialData: (Product & { seller_name: string })
   const [openModal, setOpenModal] = React.useState(false);
   const [selectedVehicle, setSelectedVehicle] = React.useState<Product & { seller_name: string } | null>(null);
   const [openSuccess, setOpenSuccess] = React.useState(false);
+  const [vehicleId, setVehicleId] = React.useState<number | null>(null);
+  const [shareOpen, setShareOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const delayDebounce = setTimeout(async () => {
       const data = await ProductService.getAll(productFilters)
       setData(data)
-    }, 150) // wait 5 seconds after last change
+    }, 150)
+    return () => clearTimeout(delayDebounce)
+  }, [productFilters.searchValue])
 
-    return () => clearTimeout(delayDebounce) // clear timer if user types again
-  }, [productFilters.searchValue]) // only trigger when searchValue changes
-
-  // 🔁 Fetch when other filters change (no delay)
   React.useEffect(() => {
     const fetchFilteredData = async () => {
       const data = await ProductService.getAll(productFilters)
@@ -47,9 +48,10 @@ const ProductClient = (props: { initialData: (Product & { seller_name: string })
   return (
     <div className='w-full h-full min-h-screen flex flex-col items-start justify-start md:px-8 py-15'>
       <ProductFilters onFiltersChange={(item) => handleFilterChange(item)} filters={productFilters} />
-      <ProductList data={data} selectedItem={(item) => setSelectedVehicle(item)} onClick={() => setOpenModal(true)} />
+      <ProductList data={data} selectedItem={(item) => setSelectedVehicle(item)} onClick={() => setOpenModal(true)} onShare={(id, e) => { setVehicleId(id); console.log(id); setShareOpen(true); e?.preventDefault() }} />
       <SuccessForm open={openSuccess} onClose={() => setOpenSuccess(false)} />
       <InquiryModal open={openModal} onClose={() => { setOpenModal(!openModal) }} vehicleDetails={selectedVehicle} openSuccess={() => setOpenSuccess(true)} />
+      <ShareAction forumId={vehicleId} shareUrl={window.location.href} onClose={() => setShareOpen(!shareOpen)} open={shareOpen} description='Choose a platform to share discussion' />
     </div>
   )
 }

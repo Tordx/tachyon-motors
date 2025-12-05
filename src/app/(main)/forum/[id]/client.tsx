@@ -11,6 +11,14 @@ import Loading from './loading'
 import AuthorSection from './sections/author'
 import ContentSection from './sections/content'
 import CommentSection from './sections/comments'
+import ShareAction from '../contents/sections/thread/components/share-actions'
+
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    FB: any
+  }
+}
 
 const ForumItem = ({ id }: { id: string }) => {
   const { isAuthenticated } = useAuth()
@@ -22,6 +30,7 @@ const ForumItem = ({ id }: { id: string }) => {
   const [commentReplies, setCommentReplies] = useState<Record<number, ForumCommentResponse[]>>({});
   const [openReplies, setOpenReplies] = useState<Record<number, boolean>>({});
   const [commentsRepliesLoading, setCommentsRepliesLoading] = useState<Record<number, boolean>>({});
+  const [open, setOpen] = useState<boolean>(false)
   const [iLiked, setILiked] = useState<boolean>(false)
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(true)
@@ -61,12 +70,17 @@ const ForumItem = ({ id }: { id: string }) => {
   }
 
   const handleInteractionPressed = async (item: string) => {
-    if (!isAuthenticated) {
-      router.replace('?modal=login')
-      return
+
+
+    if (item === 'share') {
+      setOpen(!open)
     }
 
     if (item === 'cookie') {
+      if (!isAuthenticated) {
+        router.replace('?modal=login')
+        return
+      }
       const increment = iLiked ? -1 : 1
       setILiked(!iLiked)
       setForumDetails((prev) =>
@@ -211,6 +225,7 @@ const ForumItem = ({ id }: { id: string }) => {
               [id]: e,
             }))} />
       </div>
+      <ShareAction shareUrl={window.location.href} onClose={() => setOpen(!open)} open={open} description='Choose a platform to share discussion' />
     </div>
   )
 }

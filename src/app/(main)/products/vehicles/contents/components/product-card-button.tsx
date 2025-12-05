@@ -6,6 +6,8 @@ import formatCurrency from '@/utils/currency-format'
 import Link from 'next/link'
 import React from 'react'
 import FinancingBadge from '../../[id]/components/financing-options'
+import Share from '@/components/icons/share'
+import InteractionButton from '@/app/(main)/forum/contents/sections/thread/components/button'
 
 type Props = {
   item: (Product & { seller_name: string });
@@ -13,9 +15,10 @@ type Props = {
     e: React.MouseEvent<HTMLButtonElement>,
     item: Product & { seller_name: string }
   ): void;
+  onShare(e?: React.MouseEvent<HTMLButtonElement>): void;
 }
 
-const ProductCardButton = ({ item, onClick }: Props) => {
+const ProductCardButton = ({ item, onClick, onShare }: Props) => {
   return (
     <Link
       href={`/products/vehicles/${item.id}`}
@@ -47,15 +50,19 @@ const ProductCardButton = ({ item, onClick }: Props) => {
       {/* BOTTOM: Info */}
       <div className='p-3 sm:p-4 flex flex-col justify-between text-left flex-1 border-1 border-gray-700 rounded-b-lg'>
         <div>
-          <div>
-            <h2 className='text-base sm:text-lg font-semibold text-white line-clamp-1'>
-              {item.brand} {item.model}
-            </h2>
-            <h3 className='text-base text-xs font-normal text-white line-clamp-1'>{item.seller_name}</h3>
+          <div className='flex w-full justify-between items-center'>
+            <div>
+              <h2 className='text-base sm:text-lg font-semibold text-white line-clamp-1'>
+                {item.brand} {item.model}
+              </h2>
+              <h3 className='text-base text-xs font-normal text-white line-clamp-1'>{item.seller_name}</h3>
+            </div>
+            <div>
+              <InteractionButton onClick={onShare}> <Share /></InteractionButton>
+            </div>
           </div>
           <p className='text-xs sm:text-sm text-white/50'>{item.year}</p>
         </div>
-
         <div className='text-xs sm:text-sm text-gray-600 mt-3'>
           <p className='font-medium'>{item.mileage.toLocaleString()} km</p>
         </div>

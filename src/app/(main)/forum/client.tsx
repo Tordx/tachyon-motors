@@ -13,9 +13,12 @@ import axios from 'axios'
 import { ForumService } from '@/services/forum'
 import { ForumSkeleton } from './skeleton'
 import { useRouter } from 'next/navigation'
+import ShareAction from './contents/sections/thread/components/share-actions'
 
 export default function ForumClient({ discussionList }: { discussionList: Discussion[] }) {
   const [mobileDiscussionOpen, setMobileDiscussionOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState<boolean>(false);
+  const [forumId, setForumId] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [forum, setForum] = useState<ForumContent[]>([]);
   const { isAuthenticated } = useAuth();
@@ -43,6 +46,11 @@ export default function ForumClient({ discussionList }: { discussionList: Discus
 
   const handleInteractionPressed = async (item: string, id: number) => {
 
+    if(item === 'share') {
+      setShareOpen(!shareOpen);
+      setForumId(id);
+      return;
+    }
 
     if (item === 'comments') {
       router.push(`forum/${id}`)
@@ -107,6 +115,8 @@ export default function ForumClient({ discussionList }: { discussionList: Discus
           />
         )}
       </AnimatePresence>
+      <ShareAction forumId={forumId} shareUrl={window.location.href} onClose={() => setShareOpen(!shareOpen)} open={shareOpen} description='Choose a platform to share discussion' />
+
     </div>
   )
 }

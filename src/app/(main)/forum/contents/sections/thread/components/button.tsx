@@ -1,7 +1,7 @@
 import React from 'react'
 
 type Props = {
-  onClick(): void;
+  onClick(e?: React.MouseEvent<HTMLButtonElement>): void;
   children: React.ReactNode;
   count?: number;
   className?: string;

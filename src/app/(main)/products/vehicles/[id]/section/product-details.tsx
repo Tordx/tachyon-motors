@@ -5,6 +5,8 @@ import { ProductWithSeller } from '@/services/products'
 import FinancingBadge from '../components/financing-options'
 import formatCurrency from '@/utils/currency-format'
 import InfoIcon from '@/components/icons/info'
+import InteractionButton from '@/app/(main)/forum/contents/sections/thread/components/button'
+import Share from '@/components/icons/share'
 
 type Props = {
   product: ProductWithSeller | null
@@ -39,9 +41,15 @@ const ProductDetails = (props: Props) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
         <div className="absolute bottom-6 left-6 md:left-12">
+          <div className='flex gap-4 items-center justify-center'>
           <h1 className="text-4xl md:text-5xl font-bold drop-shadow-lg">
             {product.name}
           </h1>
+              <div className='w-auto h-auto'>
+                    <InteractionButton onClick={() => {}}> <Share /></InteractionButton>
+
+          </div>
+          </div>
           <p className="text-gray-300 mt-1">
             {product.brand} — {product.model} ({product.year})
           </p>
